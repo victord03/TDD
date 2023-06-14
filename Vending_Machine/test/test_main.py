@@ -1,4 +1,4 @@
-from Vending_Machine.src import main as m
+from Vending_Machine.vm_class import vending_machine as m
 import pytest
 
 # machine_instance = setup()
@@ -36,6 +36,25 @@ param_not_allowed_stock_amounts = pytest.mark.parametrize(
     [
         (water, 0, ValueError),
         (water, -3, ValueError),
+    ]
+)
+
+param_refill_requests = pytest.mark.parametrize(
+    'item1,item2,item1_stock_amount,item2_stock_amount,result',
+    [
+        (water, coca_cola, 8, 6, []),
+        (water, coca_cola, 2,  6, ['Water']),
+        (water, coca_cola, 2,  1, ['Water', 'Coca Cola'])
+
+    ]
+)
+
+param_sales_log = pytest.mark.parametrize(
+    'item1,item2,item3,sales1,sales2,sales3,result',
+    [
+        (water,coca_cola,red_bull,2,1,1,{'Water': 2, 'Coca Cola': 1, 'Red Bull': 1}),
+        (orange_juice,soda,water,4,2,9,{'Orange Juice': 4, 'Soda': 2, 'Water': 9}),
+        (lucozade,red_bull,orange_juice,2,12,6,{'Lucozade': 2, 'Red Bull': 12, 'Orange Juice': 6}),
     ]
 )
 
@@ -123,7 +142,7 @@ def test_purchase_item_decreases_stock_amount_by_one():
 def test_stock_of_each_item(item, stock_amount, result):
     machine_instance = setup()
     machine_instance.add_item(item, stock_amount)
-    assert machine_instance.available_stock("Water") == result
+    assert machine_instance.available_stock('Water') == result
 
 @param_not_allowed_stock_amounts
 def test_adding_zero_or_negative_stock_amount_returns_value_error(item, stock_amount, result):
@@ -132,3 +151,32 @@ def test_adding_zero_or_negative_stock_amount_returns_value_error(item, stock_am
     with pytest.raises(ValueError):
         assert machine_instance.add_item(item, stock_amount) == result
 
+@param_refill_requests
+def test_check_all_stock(item1,item2,item1_stock_amount,item2_stock_amount,result):
+    machine_instance = setup()
+    machine_instance.add_item(item1, item1_stock_amount)
+    machine_instance.add_item(item2, item2_stock_amount)
+    assert machine_instance.check_all_stock() == result
+
+@param_sales_log
+def test_sold_item_logged(item1,item2,item3,sales1,sales2,sales3,result):
+    machine_instance = setup()
+    stock_amount = 20
+
+    machine_instance.add_item(item1, stock_amount)
+    machine_instance.add_item(item2, stock_amount)
+    machine_instance.add_item(item3, stock_amount)
+
+    for _ in range(0, sales1):
+        item_name = item1['name']
+        machine_instance.purchase_item(item_name)
+
+    for _ in range(0, sales2):
+        item_name = item2['name']
+        machine_instance.purchase_item(item_name)
+
+    for _ in range(0, sales3):
+        item_name = item3['name']
+        machine_instance.purchase_item(item_name)
+
+    assert machine_instance.sales_log == result
