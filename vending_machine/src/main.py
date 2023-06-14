@@ -1,4 +1,4 @@
-from Vending_Machine.vm_class.vending_machine import VendingMachine
+from vending_machine.vm_class.vending_machine import VendingMachine
 
 def main():
 

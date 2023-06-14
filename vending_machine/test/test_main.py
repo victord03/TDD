@@ -1,4 +1,7 @@
-from Vending_Machine.vm_class import vending_machine as m
+from unittest.mock import patch, MagicMock
+
+from vending_machine.vm_class import vending_machine as m
+from vending_machine.src.main import main
 import pytest
 
 # machine_instance = setup()
@@ -82,7 +85,7 @@ def test_add_empty_item_fails():
     water_2 = {'name': 'Water', 'cost': ''}
     stock_amount = 2
     with pytest.raises(ValueError):
-        machine_instance.add_item(water_2, stock_amount)
+        assert machine_instance.add_item(water_2, stock_amount)
 
 def test_adding_multiple_items_of_the_same_name_only_stores_one_dict_key():
     machine_instance = setup()
@@ -180,3 +183,9 @@ def test_sold_item_logged(item1,item2,item3,sales1,sales2,sales3,result):
         machine_instance.purchase_item(item_name)
 
     assert machine_instance.sales_log == result
+
+@patch('vending_machine.src.main.VendingMachine')
+def test_main(mock_vending_machine):
+    mock_vending_machine = MagicMock(spec=m.VendingMachine)
+    main()
+    assert isinstance(mock_vending_machine, m.VendingMachine)
