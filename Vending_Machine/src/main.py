@@ -2,15 +2,24 @@
 class VendingMachine:
     inventory: dict
     wallet: float
+    stock: dict
 
     def __init__(self):
         self.inventory = dict()
         self.wallet = float()
+        self.stock = dict()
 
-    def add_item(self, item: dict):
+    def add_item(self, item: dict, stock_count: int):
 
-        if not self.inventory.get(item['name']):
-            self.inventory[item['name']] = float(item['cost'])
+        item_name = item['name']
+        item_cost = item['cost']
+
+        if not self.inventory.get(item_name):
+            self.inventory[item_name] = float(item_cost)
+        if stock_count > 0:
+            self.stock[item_name] = stock_count
+        else:
+            raise ValueError("Cannot register 0 or negative stock amount.")
 
     def count_items(self):
         return len(self.inventory.keys())
@@ -24,5 +33,9 @@ class VendingMachine:
         else:
             self.wallet += amount
 
-    def purchase_item(self, item: str):
-        self.wallet += self.inventory[item]
+    def purchase_item(self, item_name: str):
+        self.wallet += self.inventory[item_name]
+        self.stock[item_name] -= 1
+
+    def available_stock(self, item_name: str):
+        return self.stock[item_name]
