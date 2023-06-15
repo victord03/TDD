@@ -1,3 +1,4 @@
+from vending_machine.menu_class.vm_menus import VmMenus
 
 class VendingMachine:
     inventory: dict
@@ -5,11 +6,15 @@ class VendingMachine:
     stock: dict
     sales_log: dict
 
+    menu: VmMenus
+
     def __init__(self):
         self.inventory = dict()
         self.wallet = float()
         self.stock = dict()
         self.sales_log = dict()
+        self.menu = VmMenus()
+        self.menu.options['Display items'] = self.give_item_list
 
     def add_item(self, item: dict, stock_count: int) -> None:
 
@@ -21,7 +26,7 @@ class VendingMachine:
         if stock_count > 0:
             self.stock[item_name] = stock_count
         else:
-            raise ValueError("Cannot register 0 or negative stock amount.")
+            raise ValueError('Cannot register 0 or negative stock amount.')
 
     def count_items(self) -> int:
         return len(self.inventory.keys())
@@ -56,3 +61,4 @@ class VendingMachine:
                 items_need_restock.append(item_name)
 
         return items_need_restock
+

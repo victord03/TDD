@@ -4,6 +4,5 @@ def main():
 
     vm = VendingMachine()
 
-
 if __name__ == '__main__':
     main()
