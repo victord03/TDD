@@ -1,5 +1,4 @@
-from vending_machine.menu_class.vm_menus import VmMenus
-from vending_machine.vm_class import vending_machine as m
+from vending_machine.vm_class import vending_machine as m, print_statements
 import pytest
 
 # machine_instance = setup()
@@ -8,9 +7,6 @@ import pytest
 
 def setup():
     return m.VendingMachine()
-
-def menus_setup():
-    return VmMenus()
 
 water = {'name': 'Water', 'cost': 0.5}
 coca_cola = {'name': 'Coca Cola', 'cost': 0.8}
@@ -156,14 +152,6 @@ class TestBaseFunctionality:
 
         assert machine_instance.sales_log == result
 
-    def test_display_menu_exists_in_vending_machine(self):
-        machine_instance = setup()
-        assert isinstance(machine_instance.menu, VmMenus)
-
-    def test_display_menu_options(self):
-        machine_instance = setup()
-        assert machine_instance.menu.options['Display items'] == machine_instance.give_item_list
-
 
 class TestHandleExceptions:
 
@@ -198,5 +186,48 @@ class TestHandleExceptions:
             assert str(
                 error_pytest) == 'Cannot register 0 or negative stock amount.'  # todo: debatable link to above assertion
 
+
+class TestMenu:
+
+    def test_display_menu(self):
+        machine_instance = setup()
+        assert machine_instance.display_main_menu() == '\n' + print_statements.main_menu
+
+    def test_input_capture(self):
+        machine_instance = setup()
+        user_input = '1'
+        assert machine_instance.get_user_input(user_input) == user_input
+
+    def test_display_items_choice_calls_display_items_function(self):
+        machine_instance = setup()
+
+        items_for_this_test = water, lucozade, orange_juice
+
+        machine_instance.add_item(items_for_this_test[0], 2)
+        machine_instance.add_item(items_for_this_test[1], 1)
+        machine_instance.add_item(items_for_this_test[2], 5)
+
+        item_chosen_for_purchase = items_for_this_test[2]['name']
+
+        items_dict = {x['name']: x['cost'] for x in items_for_this_test}
+
+        items_and_prices = ''
+
+        for item_name, item_cost in items_dict.items():
+            items_and_prices += f"\n\t\t{item_name}: {item_cost} EUR"
+
+        patch_user_input = '1'
+        patch_sub_menu_choice = '1'
+        patch_item_name = item_chosen_for_purchase
+
+        expected_output_text = str()
+        expected_output_text += machine_instance.display_main_menu()
+        expected_output_text += '\n' + 'Available items:'
+        expected_output_text += items_and_prices
+        expected_output_text += machine_instance.display_options_under_main_menu()
+        expected_output_text += print_statements.choose_item
+
+        assert machine_instance.menu_sequence(patch_user_input, patch_sub_menu_choice, patch_item_name) == print(expected_output_text)
+        assert machine_instance.sales_log[item_chosen_for_purchase] == 1
 
 

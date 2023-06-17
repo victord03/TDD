@@ -1,4 +1,5 @@
-from vending_machine.menu_class.vm_menus import VmMenus
+from vending_machine.vm_class import print_statements
+
 
 class VendingMachine:
     inventory: dict
@@ -6,15 +7,11 @@ class VendingMachine:
     stock: dict
     sales_log: dict
 
-    menu: VmMenus
-
-    def __init__(self):
+    def __init__(self) -> None:
         self.inventory = dict()
         self.wallet = float()
         self.stock = dict()
         self.sales_log = dict()
-        self.menu = VmMenus()
-        self.menu.options['Display items'] = self.give_item_list
 
     def add_item(self, item: dict, stock_count: int) -> None:
 
@@ -61,4 +58,68 @@ class VendingMachine:
                 items_need_restock.append(item_name)
 
         return items_need_restock
+
+    @staticmethod
+    def display_main_menu() -> str:
+        return '\n' + print_statements.main_menu
+
+    @staticmethod
+    def display_options_under_main_menu() -> str:
+        return '\n' + print_statements.options_under_main_menu
+
+    @staticmethod
+    def get_user_input(user_input='') -> str:
+        if user_input == '':
+            return input(print_statements.user_input_deco)
+        else:
+            return user_input
+
+
+    def menu_sequence(self, patch_main_menu_choice='', patch_sub_menu_choice='', patch_item_name_choice=''):
+
+        print(self.display_main_menu())
+
+        user_input = self.get_user_input(patch_main_menu_choice)
+
+        header = '\n' + 'Available items:'
+        print(header)
+
+
+        sub_menu_option = {
+            '1': self.compile_items_and_prices_list_for_display,
+
+        }
+
+        match user_input:
+            case '1':
+                items_with_prices = sub_menu_option['1']()
+
+        print(items_with_prices)
+
+        print(self.display_options_under_main_menu())
+
+        sub_menu_choice = self.get_user_input(patch_sub_menu_choice)
+
+        sub_menu_options = {
+            '1': print_statements.choose_item,
+
+        }
+
+        match sub_menu_choice:
+            case '1': next_text = sub_menu_options['1']
+
+        print(next_text)
+
+        item_name = self.get_user_input(patch_item_name_choice)
+        self.purchase_item(item_name.title())
+
+
+    def compile_items_and_prices_list_for_display(self):
+
+        items_and_prices = ''
+
+        for item_name, cost in self.inventory.items():
+            items_and_prices += f"\n\t\t{item_name}: {cost} EUR"
+
+        return items_and_prices
 
