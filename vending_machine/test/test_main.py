@@ -1,7 +1,5 @@
-from vending_machine.vm_class import vending_machine as m, print_statements
+from vending_machine.vm_class import vending_machine as m
 import pytest
-
-# machine_instance = setup()
 
 # (pytest.fixture) as a generator
 
@@ -191,7 +189,7 @@ class TestMenu:
 
     def test_display_menu(self):
         machine_instance = setup()
-        assert machine_instance.display_main_menu() == '\n' + print_statements.main_menu
+        assert machine_instance.display_main_menu() == '\n' + m.main_menu
 
     def test_input_capture(self):
         machine_instance = setup()
@@ -225,7 +223,7 @@ class TestMenu:
         expected_output_text += '\n' + 'Available items:'
         expected_output_text += items_and_prices
         expected_output_text += machine_instance.display_options_under_main_menu()
-        expected_output_text += print_statements.choose_item
+        expected_output_text += m.choose_item
 
         assert machine_instance.menu_sequence(patch_user_input, patch_sub_menu_choice, patch_item_name) == print(expected_output_text)
         assert machine_instance.sales_log[item_chosen_for_purchase] == 1

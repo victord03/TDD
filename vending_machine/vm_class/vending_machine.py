@@ -1,4 +1,11 @@
-from vending_machine.vm_class import print_statements
+
+user_input_deco = f'\n> '
+
+main_menu = f'\nMain Menu:\n\t1. Display items'
+
+options_under_main_menu = f'\t1. Purchase'
+
+choose_item = f'\nWhich item to purchase ?'
 
 
 class VendingMachine:
@@ -61,16 +68,16 @@ class VendingMachine:
 
     @staticmethod
     def display_main_menu() -> str:
-        return '\n' + print_statements.main_menu
+        return '\n' + main_menu
 
     @staticmethod
     def display_options_under_main_menu() -> str:
-        return '\n' + print_statements.options_under_main_menu
+        return '\n' + options_under_main_menu
 
     @staticmethod
     def get_user_input(user_input='') -> str:
         if user_input == '':
-            return input(print_statements.user_input_deco)
+            return input(user_input_deco)
         else:
             return user_input
 
@@ -101,7 +108,7 @@ class VendingMachine:
         sub_menu_choice = self.get_user_input(patch_sub_menu_choice)
 
         sub_menu_options = {
-            '1': print_statements.choose_item,
+            '1': choose_item,
 
         }
 
